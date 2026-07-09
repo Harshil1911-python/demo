@@ -18,6 +18,7 @@ db.exec(`
     form_name TEXT NOT NULL,
     form_slug TEXT UNIQUE NOT NULL,
     fields TEXT NOT NULL,
+    redirect_url TEXT DEFAULT '',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (portal_user_id) REFERENCES portal_users(id)
   );
@@ -32,5 +33,12 @@ db.exec(`
     FOREIGN KEY (form_id) REFERENCES forms(id)
   );
 `);
+
+// Add redirect_url column if it doesn't exist (for existing databases)
+try {
+  db.exec("ALTER TABLE forms ADD COLUMN redirect_url TEXT DEFAULT ''");
+} catch (e) {
+  // Column already exists, ignore
+}
 
 module.exports = db;
